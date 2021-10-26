@@ -1,22 +1,70 @@
 import logo from './logo.svg';
 import './App.css';
 
+
+function logEvent(name, params) {
+  if (!name) {
+    return;
+  }
+
+  if (window.AnalyticsWebInterface) {
+    // Call Android interface
+    window.AnalyticsWebInterface.logEvent(name, JSON.stringify(params));
+  } else if (window.webkit
+      && window.webkit.messageHandlers
+      && window.webkit.messageHandlers.firebase) {
+    // Call iOS interface
+    var message = {
+      command: 'logEvent',
+      name: name,
+      parameters: params
+    };
+    window.webkit.messageHandlers.firebase.postMessage(message);
+  } else {
+    // No Android or iOS interface found
+    console.log("No native APIs found.");
+  }
+}
+
+function setUserProperty(name, value) {
+  if (!name || !value) {
+    return;
+  }
+
+  if (window.AnalyticsWebInterface) {
+    // Call Android interface
+    window.AnalyticsWebInterface.setUserProperty(name, value);
+  } else if (window.webkit
+      && window.webkit.messageHandlers
+      && window.webkit.messageHandlers.firebase) {
+    // Call iOS interface
+    var message = {
+      command: 'setUserProperty',
+      name: name,
+      value: value
+   };
+    window.webkit.messageHandlers.firebase.postMessage(message);
+  } else {
+    // No Android or iOS interface found
+    console.log("No native APIs found.");
+  }
+}
+
+
 function App() {
+
+  const onClick = ()=>{
+    console.log("webview event!")
+    logEvent("banner_click","Get it now");
+  }
+  
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
+        <img src={logo} className="App-logo" alt="logo"  />
+        <p onClick={onClick}>
+          Click here to send webview event!
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
     </div>
   );
