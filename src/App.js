@@ -55,7 +55,11 @@ function App() {
 
   const onClick = ()=>{
     console.log("webview event!")
-    logEvent("banner_click","Get it now");
+    const params = {
+      content:"Get it now"
+      
+    }
+    logEvent("banner_click",params);
   }
   
   return (
