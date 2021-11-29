@@ -64,7 +64,9 @@ function App() {
     logEvent("이벤트명", params);
   }
   const onClickEcommerce = () => {
-   
+    const dataLayer = window.dataLayer;
+
+    if (!dataLayer) { return; }
 
     var item = [];
 
@@ -87,9 +89,8 @@ function App() {
     }
 
     item.push(prdObj);
-
-    window.dataLayer.push({ ecommerce: null });
-    window.dataLayer.push({
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
       event: 'view_promotion',
       ecommerce: { items: item }
     });
@@ -100,8 +101,8 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p  onClick={onClickEcommerce}> Ecommerce Data !</p>
-        <br/>
+        <p onClick={onClickEcommerce}> Ecommerce Data !</p>
+        <br />
         <p onClick={onClick}>
           Click here to send webview event!
         </p>
