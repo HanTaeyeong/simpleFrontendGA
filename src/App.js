@@ -95,6 +95,8 @@ function App() {
       ecommerce: { items: item }
     });
     console.log(window.dataLayer)
+
+    logEvent("EcommerceTest",dataLayer[dataLayer.length-1])
   }
 
   return (
