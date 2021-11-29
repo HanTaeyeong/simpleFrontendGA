@@ -10,7 +10,10 @@ function logEvent(name, params) {
   if (window.AnalyticsWebInterface) {
     // Call Android interface
     window.AnalyticsWebInterface.logEvent(name, JSON.stringify(params));
-  } else if (window.webkit
+    return;
+  }
+
+  if (window.webkit
       && window.webkit.messageHandlers
       && window.webkit.messageHandlers.firebase) {
     // Call iOS interface
@@ -20,10 +23,10 @@ function logEvent(name, params) {
       parameters: params
     };
     window.webkit.messageHandlers.firebase.postMessage(message);
-  } else {
+    return;
+  } 
     // No Android or iOS interface found
     console.log("No native APIs found.");
-  }
 }
 
 function setUserProperty(name, value) {
@@ -32,40 +35,80 @@ function setUserProperty(name, value) {
   }
 
   if (window.AnalyticsWebInterface) {
-    // Call Android interface
     window.AnalyticsWebInterface.setUserProperty(name, value);
-  } else if (window.webkit
+  } 
+   if (window.webkit
       && window.webkit.messageHandlers
       && window.webkit.messageHandlers.firebase) {
-    // Call iOS interface
+
     var message = {
       command: 'setUserProperty',
       name: name,
       value: value
    };
     window.webkit.messageHandlers.firebase.postMessage(message);
-  } else {
-    // No Android or iOS interface found
+    return;
+
+  } 
+
     console.log("No native APIs found.");
-  }
 }
 
 
 function App() {
 
   const onClick = ()=>{
-    console.log("webview event!")
     const params = {
-      content:"Get it now"
-      
+      content:"테스트 내용"
     }
-    logEvent("banner_click",params);
+    logEvent("이벤트명",params);
   }
-  
+  const onClickEcommerce =()=>{
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      'event':'defaultVariables',
+      'dimension1':'val 1',
+      'dimension2':'val 2',
+      'dimension3':'val 3',
+      'metric1':1,
+      'metric2':2,
+    })
+
+
+  var item = [];
+
+  var prdObj = {
+    item_name : '{{상품 이름}}',
+    item_id : '{{상품 Id}}',
+    price : '{{가격(숫자)}}',
+    item_brand : '{{상품 브랜드}}',
+    item_category : '{{상품 카테고리 1}}',
+    item_category2 : '{{상품 카테고리 2}}',
+    item_category3 : '{{상품 카테고리 3}}',
+    item_category4 : '{{상품 카테고리 4}}',
+    item_variant : '{{상품 옵션}}',
+    promotion_id : '{{프로모션 Id}}',
+    promotion_name : '{{프로모션 명}}',
+    creative_name : '{{크리에이티브 이름}}',
+    creative_slot : '{{크리에이티브 슬롯}}',
+    index : '{{목록에서 제품의 위치(숫자)}}',
+    quantity : '{{상품 수량(숫자)}}'
+  }
+
+  item.push(prdObj);
+
+  dataLayer.push({ ecommerce: null });
+  dataLayer.push({
+    event : 'view_promotion',
+    ecommerce : { items : item }
+ });
+
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo"  />
+        <img src={logo} className="App-logo" alt="logo" onClick={onClickEcommerce} />
         <p onClick={onClick}>
           Click here to send webview event!
         </p>
